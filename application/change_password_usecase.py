@@ -4,31 +4,30 @@ from domain.events import Event
 from domain.user import User
 from typing import Protocol
 
-class SignupRepository(Protocol):
-    def signup(self, user:User) -> None:
-        pass
+class ChangePasswordRepository(Protocol): 
+    def get_user_by_id(self, id: int) -> User:...
+    def change_password(self, user:User) -> None:...
+
 
 class IDispatcher(Protocol):
     def send_events(self, *event: Event) -> None: ...
-
-
-
+    
 @dataclass
 class Input:
-    user: str
+    id: int
     password: str
 
 @dataclass
 class Output:
     id: int
 
-class SignupUsecase:
-    def __init__(self, repo:SignupRepository, dispatcher: IDispatcher) -> None:
+class ChangePasswordUsecase:
+    def __init__(self, repo:ChangePasswordRepository, dispatcher: IDispatcher) -> None:
         self._repo = repo
         self._dispatcher = dispatcher
 
     def execute(self, input: Input) -> Output:  
-        user = User.signup(input.email, password=input.password)
-        self._repo.signup(user)
-        self._dispatcher.send_events(*user.get_events())
+        user = self._repo.get_user_by_id(id=input.id)
+        user.change_password(password=input.password)
+        self._repo.change_password(user)
         return Output(id=user.id)

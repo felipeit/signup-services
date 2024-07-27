@@ -1,7 +1,7 @@
-from django.db import models 
+from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
-from domain.user import User
+from domain.user import User as DomainUser
 
 
 class EmailUserManager(BaseUserManager):
@@ -31,7 +31,31 @@ class User(PermissionsMixin, AbstractBaseUser):
     USERNAME_FIELD = 'email'
 
     @classmethod
-    def signup(cls, user:User) -> None: # Domain User
+    def signup(cls, user:DomainUser) -> None: # Domain User
         user_orm = cls(password=user.password, email=user.email)
+        user_orm.set_password(user_orm.password)
         user_orm.save()
         user.id = user_orm.id
+
+    @classmethod
+    def change_password(cls, user:DomainUser) -> None:
+        u = User.objects.get(id=user.id)
+        u.set_password(u.password)
+        u.save()
+
+    @classmethod
+    def get_user_by_id(cls, id: int) -> DomainUser | None:
+        if user_orm := cls.objects.filter(id=id).first():
+            return DomainUser(
+                email=user_orm.email,
+                password=user_orm.password,
+                id=user_orm.id,
+            )
+        return user_orm
+        
+    @classmethod
+    def delete_user_by_id(cls, id: int) -> str:
+        if user_orm := cls.objects.filter(id=id).first():
+            user_orm.delete()
+            return "Usuário deletado com sucesso!"
+        return "Usuário não encontrado!"

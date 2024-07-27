@@ -1,0 +1,21 @@
+services:
+    rabbitmq:
+        image: "rabbitmq:3-management"
+        container_name: "signup_services_queue"
+        ports:
+            - "15672:15672"
+            - "5672:5672"
+    database:
+        image: postgres:latest
+        container_name: signup_services_db
+        environment:
+            - POSTGRES_HOST=db
+            - POSTGRES_PORT=5432
+            - POSTGRES_DB=signup
+            - POSTGRES_USER=signup
+            - POSTGRES_PASSWORD=signup
+        restart: always
+        ports:
+            - "5432:5432"
+        volumes:
+            - /opt/applications/data_persistence/database/db:/var/lib/postgresql/data
