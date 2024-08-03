@@ -1,5 +1,6 @@
-from typing import Any, Sequence
 from datetime import datetime
+from typing import Any, Sequence
+
 from .event import Event
 
 
@@ -14,17 +15,18 @@ class User:
 
     # 2 - Esse método serve signup
     @classmethod
-    def signup(cls, email:str, password:str) -> "User":
+    def signup(cls, email: str, password: str) -> "User":
         user = cls(email, password, id=None)
-        user_registered_event = Event(identifier="user-registered", data=dict(
+        user_registered_event = Event(
+            identifier="telegram.user-registered",
+            data=dict(
                 email=email,
                 password=password,
-            ), 
-            created_at=user._created_at
+            ),
+            created_at=user._created_at,
         )
         user._events.append(user_registered_event)
         return user
-    
 
     def change_password(self, password) -> Any:
         self.password = password
