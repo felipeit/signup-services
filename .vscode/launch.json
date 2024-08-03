@@ -14,6 +14,17 @@
             "django": true,
             "autoStartBrowser": false,
             "program": "${workspaceFolder}/manage.py"
+        },
+        {
+            "name": "Python Debugger: FastAPI",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "core.asgi:application",
+                "--reload"
+            ],
+            "jinja": true
         }
     ]
 }
